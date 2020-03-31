@@ -1,6 +1,7 @@
 package com.example.recyclerview
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,6 +13,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity() {
     private lateinit var mAdapter: RecyclerView.Adapter<*>
     private lateinit var layoutManager: RecyclerView.LayoutManager
+    private lateinit var input : MutableList<String>
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,10 +22,8 @@ class MainActivity : AppCompatActivity() {
         myRecyclerView.setHasFixedSize(true)
         layoutManager = LinearLayoutManager(this)
         myRecyclerView.layoutManager = layoutManager
-        val input: MutableList<String> = ArrayList()
-        (0..99).forEach { i ->
-            input.add("Test$i")
-        }
+        input = ArrayList()
+        addElements()
         mAdapter = MyAdapter(input)
         myRecyclerView.adapter = mAdapter
 
@@ -46,5 +46,23 @@ class MainActivity : AppCompatActivity() {
         val itemTouchHelper = ItemTouchHelper(simpleItemTouchCallback)
         itemTouchHelper.attachToRecyclerView(myRecyclerView)
 
+        swipeRefresh.setOnRefreshListener {
+            updateRecyclerView()
+        }
+    }
+
+    private fun addElements(){
+        (0..99).forEach { i ->
+            input.add("Test$i")
+        }
+    }
+
+    private fun updateRecyclerView() {
+        input.clear()
+        mAdapter.notifyDataSetChanged()
+        addElements()
+        mAdapter.notifyDataSetChanged()
+        swipeRefresh.isRefreshing = false
+        Toast.makeText(this, "Updated list", Toast.LENGTH_SHORT).show()
     }
 }
