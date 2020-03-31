@@ -2,8 +2,10 @@ package com.example.recyclerview
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -24,5 +26,25 @@ class MainActivity : AppCompatActivity() {
         }
         mAdapter = MyAdapter(input)
         myRecyclerView.adapter = mAdapter
+
+
+        val simpleItemTouchCallback: ItemTouchHelper.SimpleCallback = object :
+            ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: ViewHolder,
+                target: ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: ViewHolder, swipeDir: Int) {
+                input.removeAt(viewHolder.adapterPosition)
+                mAdapter.notifyItemRemoved(viewHolder.adapterPosition)
+            }
+        }
+        val itemTouchHelper = ItemTouchHelper(simpleItemTouchCallback)
+        itemTouchHelper.attachToRecyclerView(myRecyclerView)
+
     }
 }
